@@ -1,0 +1,13 @@
+{{ system_prompt }}
+
+{% for message in messages %}
+    {% if message.startswith('## instruct:') %}
+        {% set user_message = message.split(':', 1)[1].strip() %}
+        {{ '[INST] ' + user_message + ' [/INST]' }}
+    {% elif message.startswith('## output:') %}
+        {% set bot_response = message.split(':', 1)[1].strip() %}
+        {{ ' ' + bot_response + ' ' + eos_token }}
+    {% else %}
+        {{ raise_exception('Invalid message format. Messages must start with "## instruct:" or "## output:"') }}
+    {% endif %}
+{% endfor %}

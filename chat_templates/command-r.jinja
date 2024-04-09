@@ -1,0 +1,21 @@
+{% if messages[0]['role'] == 'system' %}
+{% set offset = 1 %}
+{% else %}
+{% set offset = 0 %}
+{% endif %}
+
+{% for message in messages %}
+{% if (message['role'] == 'user') != (loop.index0 % 2 == offset) %}
+{{ raise_exception('Conversation roles must alternate user/assistant/user/assistant/...') }}
+{% endif %}
+<|START_OF_TURN_TOKEN|>
+{% if message['role'] == 'user' %}
+<|USER_TOKEN|>
+{% elif message['role'] == 'assistant' %}
+<|CHATBOT_TOKEN|>
+{% else %}
+<|SYSTEM_TOKEN|>
+{% endif %}
+{{ message['content'].strip() }}
+<|END_OF_TURN_TOKEN|>
+{% endfor %}
